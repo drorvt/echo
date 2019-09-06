@@ -15,7 +15,7 @@ func main() {
 	server := http.Server{
 		Addr: ":10200",
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			fmt.Fprintf(w, "[%s] go test server v1", time.Now().Format(time.RFC3339))
+			fmt.Fprintf(w, "[%s] go test server v2", time.Now().Format(time.RFC3339))
 		}),
 	}
 
