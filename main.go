@@ -12,16 +12,19 @@ import (
 )
 
 func main() {
-	server := http.Server{
-		Addr: ":10200",
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			fmt.Fprintf(w, "[%s] go test server v3", time.Now().Format(time.RFC3339))
-		}),
-	}
+	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintf(w, "[%s] latest go test server", time.Now().Format(time.RFC3339))
+	})
 
+	http.HandleFunc("/ping", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintf(w, "pong")
+	})
+
+	server := http.Server{Addr: ":10200"}
 	go func() {
+		log.Println("start the server")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalln("server start failed")
+			log.Fatalln("server start failed", err)
 		}
 	}()
 
@@ -29,7 +32,7 @@ func main() {
 	signal.Notify(stopSig, syscall.SIGINT, syscall.SIGTERM)
 	<-stopSig
 
-	log.Println("Shutdown-ing")
+	log.Println("graceful stopping")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -38,13 +41,13 @@ func main() {
 	go func() {
 		defer close(graceful)
 		if err := server.Shutdown(ctx); err != nil {
-			log.Println("Shutdown error", err)
+			log.Println("shutdown error", err)
 		}
 	}()
 
 	select {
 	case <-ctx.Done():
-		log.Println("Shutdown timeout")
+		log.Println("shutdown timeout")
 	case <-graceful:
 		log.Println("bye")
 	}
