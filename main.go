@@ -13,7 +13,7 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "v1")
+		fmt.Fprintf(w, "v2")
 	})
 
 	http.HandleFunc("/ping", func(w http.ResponseWriter, req *http.Request) {
