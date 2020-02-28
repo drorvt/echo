@@ -4,6 +4,6 @@ COPY . .
 RUN go build -ldflags '-w -s' -o /app/server .
 
 FROM alpine:3.11
-COPY --from=builder /app/k8s-example-server /usr/bin/server
+COPY --from=builder /app/server /usr/bin/server
 EXPOSE 10200
 ENTRYPOINT [ "/usr/bin/server" ]
