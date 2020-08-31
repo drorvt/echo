@@ -1,12 +1,19 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: islishude
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: myapp
+  name: echoserver
+  namespace: islishude
 spec:
   selector:
     matchLabels:
-      app: myapp
+      app: echoserver
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -16,11 +23,11 @@ spec:
   template:
     metadata:
       labels:
-        app: myapp
+        app: echoserver
     spec:
       containers:
-        - name: myapp
-          image: islishude/k8s-example-server:v1
+        - name: echoserver
+          image: islishude/echo:v2
           ports:
             - containerPort: 8080
           resources:
@@ -32,10 +39,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: myapp
+  name: echoserver
+  namespace: islishude
 spec:
   selector:
-    app: myapp
+    app: echoserver
   type: NodePort
   ports:
     - port: 8080
