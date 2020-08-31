@@ -1,9 +1,9 @@
-FROM golang:1.14-alpine AS builder
-WORKDIR /src
+FROM golang:alpine AS builder
+WORKDIR /workdir
 COPY . .
 RUN go build -ldflags '-w -s' -o /app/server .
 
-FROM alpine:3.11
+FROM alpine
 COPY --from=builder /app/server /usr/bin/server
-EXPOSE 10200
-ENTRYPOINT [ "/usr/bin/server" ]
+EXPOSE 8080
+ENTRYPOINT [ "server" ]
