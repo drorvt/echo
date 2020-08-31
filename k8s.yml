@@ -1,17 +1,4 @@
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: myapp
-spec:
-  storageClassName: standard
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Mi
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,22 +18,15 @@ spec:
       labels:
         app: myapp
     spec:
-      volumes:
-        - name: log
-          persistentVolumeClaim:
-            claimName: myapp
       containers:
         - name: myapp
-          image: islishude/k8s-example-server
+          image: islishude/k8s-example-server:v1
+          ports:
+            - containerPort: 8080
           resources:
             limits:
-              memory: "128Mi"
-              cpu: "500m"
-          ports:
-            - containerPort: 10200
-          volumeMounts:
-            - mountPath: /log
-              name: log
+              memory: "256Mi"
+              cpu: "1000m"
 
 ---
 apiVersion: v1
@@ -58,6 +38,6 @@ spec:
     app: myapp
   type: NodePort
   ports:
-    - port: 10200
-      targetPort: 10200
+    - port: 8080
+      targetPort: 8080
       nodePort: 31020
