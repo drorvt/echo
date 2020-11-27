@@ -33,7 +33,7 @@ spec:
           resources:
             limits:
               memory: "256Mi"
-              cpu: "1000m"
+              cpu: "256m"
 
 ---
 apiVersion: v1
@@ -46,6 +46,6 @@ spec:
     app: echoserver
   type: NodePort
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
       nodePort: 31020

@@ -1,9 +1,9 @@
 FROM golang:alpine AS builder
 WORKDIR /workdir
 COPY . .
-RUN go build -ldflags '-w -s' -o /app/server .
+RUN go build -ldflags '-w -s' -o /app/echoserver .
 
-FROM alpine
-COPY --from=builder /app/server /usr/bin/server
+FROM alpine:latest
+COPY --from=builder /app/echoserver /usr/bin/echoserver
 EXPOSE 8080
-ENTRYPOINT [ "server" ]
+ENTRYPOINT [ "echoserver" ]

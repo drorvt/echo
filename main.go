@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -11,19 +12,22 @@ import (
 )
 
 func main() {
-	const version = "v1"
-
-	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+	handler := http.NewServeMux()
+	handler.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		log.Println(req.Method, req.URL.Path, req.RemoteAddr)
 		_, _ = io.Copy(w, req.Body)
 	})
 
-	http.HandleFunc("/v", func(w http.ResponseWriter, req *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(version))
+	handler.HandleFunc("/version", func(w http.ResponseWriter, _ *http.Request) {
+		const version = "latest"
+		_, _ = fmt.Fprintln(w, version)
 	})
 
-	server := http.Server{Addr: ":8080"}
+	handler.HandleFunc("/ping", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = fmt.Fprintln(w, "pong")
+	})
+
+	server := http.Server{Addr: ":8080", Handler: handler}
 	go func() {
 		stopSig := make(chan os.Signal, 1)
 		signal.Notify(stopSig, syscall.SIGINT, syscall.SIGTERM)
