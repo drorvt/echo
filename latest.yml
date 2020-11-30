@@ -27,7 +27,8 @@ spec:
     spec:
       containers:
         - name: echoserver
-          image: islishude/echo:v1
+          image: islishude/echo:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           resources:
